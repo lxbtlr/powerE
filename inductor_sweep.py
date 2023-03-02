@@ -45,8 +45,6 @@ data = { 'L':[],
         'lg':[],
         'N':[], 
         'Pe':[],
-        'Work':[],
-        'upperlimit':[],
         'Ae':[]}
 
 def total_effective_area(length):
@@ -62,15 +60,22 @@ def perm(length, area,):
 
 # sweeping through windings    #
 for n in range(5,20): 
-    #sweeping through airgaps
-    for l in np.linspace(.002*25.4,.012*25.4,100)*ur("mm"):
+    #sweeping through airgaps (converting from inches to mm)
+    for l in np.linspace(.002*25.4,.012*25.4,10)*ur("mm"):
         
         Ae = total_effective_area(l.magnitude).to("mm^2") 
         Pe = perm((l),Ae)
         L = ((n**2)*Pe).to("Wb/A")
+        
+        data["L"].append(L)
+        data["lg"].append(l)
+        data["N"].append(n)
+        data["Pe"].append(Pe)
+        data["Ae"].append(Ae)
         if L > low_target_L and L < target_L and Pe < upper:
             print(f"Perm: {Pe}, L {L}, N {n} ")
 
-
+df = pd.DataFrame(data)
+print(df)
 
 
